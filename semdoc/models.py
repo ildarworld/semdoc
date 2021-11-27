@@ -1,3 +1,4 @@
+from typing import Optional
 import datetime as dt
 from dataclasses import dataclass
 
@@ -11,3 +12,40 @@ class WeatherRequestParamsModel:
 
     def dict(self):
         return dict(country_code=self.country_code, city=self.city, date=self.date, api=self.api)
+
+
+@dataclass(frozen=True):
+class WeatherResponseModel:
+    base: str
+    clouds: Optional[str]
+    code: str
+    coord: dict
+    dt: int
+    id: int
+    main: dict
+    name: str
+    sys: dict
+    timezone: int
+    visibility: int
+    weather: list
+    wind: dict
+
+    @staticmethod
+    def from_dict(dct: dict):
+        return WeatherResponseModel(
+            base =dct["base"],
+            clouds =dct.get("clouds"),
+            code =dct["code"],
+            coord =dct["coord"],
+            dt =dct["dt"],
+            id =dct["id"],
+            main =dct["main"],
+            name =dct["name"],
+            sys =dct["sys"],
+            timezone =dct["timezone"],
+            visibility =dct["visibility"],
+            weather =dct["weather"],
+            wind =dct["wind"],
+        )
+
+
