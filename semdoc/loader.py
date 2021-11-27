@@ -6,6 +6,9 @@ import os
 
 import aiohttp
 
+from models import WeatherRequestParamsModel
+
+
 log = logging.getLogger(__name__)
 
 
@@ -14,20 +17,18 @@ class WeatherClient:
 
     URL = "https://api.openweathermap.org/data/2.5/weather"
 
-    def __init__(
-        self, api_key: str, country_code: str, city: str, date: dt.date, session: aiohttp.ClientSession = None
-    ):
-        self.api_key = api_key
-        self.country_code = country_code
-        self.city = city
-        self.date = date
+    def __init__(self, req_params: WeatherRequestParamsModel, session: aiohttp.ClientSession = None):
+        self.req_params = req_params
         if session is None:
             session = aiohttp.ClientSession(raise_for_status=True)
         self.session = session
 
     @property
     def params(self):
-        return {"q": "{city},{country}".format(city=self.city, country=self.country_code), "appid": self.api_key}
+        return {
+            "q": "{city},{country}".format(city=self.req_params.city, country=self.req_params.country_code),
+            "appid": self.req_params.api,
+        }
 
     async def _request(self):
         async with self.session.get(self.URL, params=self.params) as response:
@@ -43,7 +44,10 @@ class WeatherClient:
 if __name__ == "__main__":
 
     async def load():
-        loader = WeatherClient(api_key=os.getenv("WEATHER_API"), country_code="RU", city="Moscow", date=dt.datetime.now)
+        params = WeatherRequestParamsModel(
+            api=os.getenv("WEATHER_API"), country_code="RU", city="Moscow", date=dt.datetime.now
+        )
+        loader = WeatherClient(params)
         result = await loader.get()
         await loader.close()
         from pprint import pprint
