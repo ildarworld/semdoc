@@ -6,7 +6,7 @@ import os
 
 import aiohttp
 
-from models import WeatherRequestParamsModel, WeatherResponseModel
+from models import WeatherRequestParamsModel
 
 
 log = logging.getLogger(__name__)
@@ -35,12 +35,9 @@ class WeatherClient:
             log.info(f"STATUS:{response.status} | PARAMS: {self.params} | RESPONSE: {response.text}")
             return await response.json()
 
-    def _get_response_model(self, dct: dict) -> WeatherResponseModel:
-        return WeatherResponseModel.from_dict(dct)
-
     async def _get(self):
         response = await self._request()
-        return self._get_response_model(response)
+        return response
 
     get = partialmethod(_get)
 
