@@ -31,6 +31,7 @@ class WeatherClient:
         }
 
     async def _request(self):
+        # TODO handle exceptions
         async with self.session.get(self.URL, params=self.params) as response:
             log.info(f"STATUS:{response.status} | PARAMS: {self.params} | RESPONSE: {response.text}")
             return await response.json()

@@ -12,6 +12,8 @@ from repo import WeatherRepository
 from db import session
 from db import Weather
 
+
+# TODO create own logger with reuired settings from env-var
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
