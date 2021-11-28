@@ -17,6 +17,9 @@ log = logging.getLogger(__name__)
 
 
 async def weather(request):
+    """
+    All params are required, datetime param is in YYYY-MM-DD HH:mm format only
+    """
     status = 200
     params = WeatherRequestParamsModel(api=os.getenv("WEATHER_API"), **request.rel_url.query)
     log.info(f"\nRequest: {request=}, params: {request.rel_url.query}")
@@ -32,11 +35,9 @@ async def weather(request):
             result = await loader.get()
             _add_weather(result, params.date)
         except aiohttp.ClientResponseError as ex:
-            result = str(ex)
-            status = 404
+            result, status = str(ex), 404
         except Exception as ex:
-            result = str(ex)
-            status = 500
+            result, status = str(ex), 500
     return web.Response(text=str(result), status=status)
 
 

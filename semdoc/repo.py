@@ -10,17 +10,9 @@ from db import Weather
 log = logging.getLogger(__name__)
 
 
-def str_to_unix_timestamp(value: str) -> int:
-    d = dt.datetime.strptime(value, "%Y-%m-%d %H:%M")
-    return int(d.strftime("%s"))
-
-
-def clean_time_stamp_dt(ts: int) -> int:
-    d = dt.datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
-    return str_to_unix_timestamp(d)
-
-
 class AbstractRepository(abc.ABC):
+    """Vase repo for service"""
+
     @abc.abstractmethod  # (1)
     def add(self, *args, **kwargs):
         raise NotImplementedError  # (2)
@@ -31,8 +23,9 @@ class AbstractRepository(abc.ABC):
 
 
 class WeatherRepository(AbstractRepository):
+    """Weather repo"""
+
     def add(self, weather: Weather):
-        weather.dt = clean_time_stamp_dt(weather.dt)
         with session() as s:
             s.add(weather)
 
