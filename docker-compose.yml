@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    command: sh -c "wait-for postgres:5432 && python -c 'import db.create' && python server.py"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/weather
+      - WEATHER_API
+
+  postgres:
+    image: postgres:12.3-alpine
+    restart: unless-stopped
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=weather
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
